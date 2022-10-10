@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "ChemIITools"
+  site-url: "https://KGrewal1.github.io/ChemIITools"
+  description: "Tools for Chemistry Part II programming"
+  repo-branch: main
+  repo-url: "https://github.com/KGrewal1/ChemIITools"
