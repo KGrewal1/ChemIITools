@@ -47,7 +47,7 @@ def parse_out(file):
 
     
 
-# %% ../nbs/01_EnergySurfaces.ipynb 6
+# %% ../nbs/01_EnergySurfaces.ipynb 8
 def _func(r,theta, dict):
     # dictionary lookup
     return dict[(r,theta)]
@@ -66,7 +66,7 @@ def _dict_to_mesh(dict):
 
     return r,theta, z
 
-# %% ../nbs/01_EnergySurfaces.ipynb 7
+# %% ../nbs/01_EnergySurfaces.ipynb 9
 def surface_plot(dict, fname = None):
     """Plots a surface from the output of the regex"""
     r,theta, z = _dict_to_mesh(dict)
@@ -81,7 +81,7 @@ def surface_plot(dict, fname = None):
         plt.savefig(fname)
     plt.show()
 
-# %% ../nbs/01_EnergySurfaces.ipynb 8
+# %% ../nbs/01_EnergySurfaces.ipynb 11
 def heatmap(dict, fname = None):
     """Plots a heatmap from the output of the regex"""
     r,theta, z = _dict_to_mesh(dict)
@@ -98,7 +98,7 @@ def heatmap(dict, fname = None):
         plt.savefig(fname)
     plt.show()
 
-# %% ../nbs/01_EnergySurfaces.ipynb 10
+# %% ../nbs/01_EnergySurfaces.ipynb 13
 def vib_calc(dict, mass = 1.6735575E-27):
     """
     Calculate optimum bond length and angle and symmetric stretch and bending frequencies
