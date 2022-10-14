@@ -3,6 +3,15 @@
 # %% auto 0
 __all__ = ['generate_smiles', 'Huckel_solve', 'MO_plot']
 
+# %% ../nbs/00_HuckelSolver.ipynb 3
+#| echo: false
+from rdkit import Chem
+from rdkit.Chem.Draw import IPythonConsole
+from rdkit.Chem import Draw
+
+import numpy as np
+import matplotlib.pyplot as plt
+
 # %% ../nbs/00_HuckelSolver.ipynb 4
 IPythonConsole.ipython_useSVG=True  #< set this to False if you want PNGs instead of SVGs
 IPythonConsole.drawOptions.addAtomIndices = True
