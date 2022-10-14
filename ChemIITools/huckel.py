@@ -68,6 +68,12 @@ def MO_plot(dict):
     Plots an MO diagram based on a dictionary of energy levels and associated wavefunctions
     """
     fig, ax = plt.subplots()
+    plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False) # labels along the bottom edge are off
     for level in dict:
         degeneracy = len(dict[level])
         x = np.arange(-(0.5*(degeneracy - 1)),(0.5*(degeneracy)), 1)
