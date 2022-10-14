@@ -5,4 +5,7 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://KGrewal1.github.io',
                 'git_url': 'https://github.com/KGrewal1/ChemIITools',
                 'lib_path': 'ChemIITools'},
-  'syms': {'ChemIITools.core': {'ChemIITools.core.foo': ('huckelsolver.html#foo', 'ChemIITools/core.py')}}}
+  'syms': { 'ChemIITools.core': {'ChemIITools.core.foo': ('huckelsolver.html#foo', 'ChemIITools/core.py')},
+            'ChemIITools.huckel': { 'ChemIITools.huckel.Huckel_solve': ('huckelsolver.html#huckel_solve', 'ChemIITools/huckel.py'),
+                                    'ChemIITools.huckel.MO_plot': ('huckelsolver.html#mo_plot', 'ChemIITools/huckel.py'),
+                                    'ChemIITools.huckel.generate_smiles': ('huckelsolver.html#generate_smiles', 'ChemIITools/huckel.py')}}}
