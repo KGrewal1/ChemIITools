@@ -101,7 +101,7 @@ def heatmap(dict, fname = None):
 # %% ../nbs/01_EnergySurfaces.ipynb 10
 def vib_calc(dict, mass = 1.6735575E-27):
     """
-    Calculate optimum bond ;ength and angle and symmetric stretch and bending frequencies
+    Calculate optimum bond length and angle and symmetric stretch and bending frequencies
     Default mass is that of the hydrogen atom
     """
     h_to_J = 4.3597482E-18 # hartree to joule conversion factor
