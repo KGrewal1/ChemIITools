@@ -108,6 +108,7 @@ def vib_calc(dict, mass = 1.6735575E-27):
     h_to_J = 4.3597482E-18 # hartree to joule conversion factor
     deg_to_r = np.pi/180 # degrees to radians
     A_to_m = 1E-10 # angstrom to m
+    Hz_to_rcm = 1/29979245800 # Hertz to wavenumbers in cm-1
     r_opt, theta_opt = min(dict, key=dict.get)
     r,theta = zip(*dict.keys())
     r = np.unique(r)
@@ -164,5 +165,6 @@ def vib_calc(dict, mass = 1.6735575E-27):
 
     ktheta = 2*quad[0]
     mu_2 = 0.5*mass
-    nu_theta = np.sqrt(ktheta/(mu_2*r_opt**2))/(2*np.pi)
-    return r_opt, theta_opt, nu_r, nu_theta
+    nu_theta = np.sqrt(ktheta/(mu_2*(r_opt*A_to_m)**2))/(2*np.pi)
+
+    return r_opt, theta_opt, nu_r*Hz_to_rcm, nu_theta*Hz_to_rcm

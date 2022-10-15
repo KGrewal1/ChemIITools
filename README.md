@@ -40,7 +40,7 @@ surface_plot(h2o_vals)
 ``` python
 r_opt, theta_opt, nu_r, nu_theta = vib_calc(h2o_vals)
 print('the optimum bond length of water is ', r_opt, ' angstroms with angle ', theta_opt, ' degrees' )
-print('the stretching frequency ', nu_r, ' Hz and bending frequency ', nu_theta, ' Hz' )
+print('the stretching frequency ', round(nu_r), ' cm-1 and bending frequency ', round(nu_theta), ' cm-1' )
 ```
 
 ![](index_files/figure-gfm/cell-6-output-1.png)
@@ -48,4 +48,4 @@ print('the stretching frequency ', nu_r, ' Hz and bending frequency ', nu_theta,
 ![](index_files/figure-gfm/cell-6-output-2.png)
 
     the optimum bond length of water is  0.95  angstroms with angle  105.0  degrees
-    the stretching frequency  93321760256725.52  Hz and bending frequency  4992.563486679283  Hz
+    the stretching frequency  93321760256726  cm-1 and bending frequency  4993  cm-1
