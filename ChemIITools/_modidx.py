@@ -23,4 +23,8 @@ d = { 'settings': { 'branch': 'main',
                                           'ChemIITools.optimisation.surface_plot': ( 'energysurfaces.html#surface_plot',
                                                                                      'ChemIITools/optimisation.py'),
                                           'ChemIITools.optimisation.vib_calc': ( 'energysurfaces.html#vib_calc',
-                                                                                 'ChemIITools/optimisation.py')}}}
+                                                                                 'ChemIITools/optimisation.py')},
+            'ChemIITools.optimise': { 'ChemIITools.optimise._deriv': ('optimisation.html#_deriv', 'ChemIITools/optimise.py'),
+                                      'ChemIITools.optimise.oreg_calc': ('optimisation.html#oreg_calc', 'ChemIITools/optimise.py'),
+                                      'ChemIITools.optimise.steady_state_calc': ( 'optimisation.html#steady_state_calc',
+                                                                                  'ChemIITools/optimise.py')}}}

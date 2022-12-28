@@ -8,9 +8,6 @@ __all__ = ['parse_out', 'surface_plot', 'heatmap', 'vib_calc']
 import os
 import re
 import linecache
-from rdkit import Chem
-from rdkit.Chem.Draw import IPythonConsole
-from rdkit.Chem import Draw
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
