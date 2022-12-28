@@ -22,7 +22,7 @@ from scipy.optimize import curve_fit
 # %% ../nbs/01_EnergySurfaces.ipynb 5
 def parse_out(file):
     """
-    parses an out file of a symmetric triatomic for the bond length, angle and SCF energy 
+    parses an out file of a symmetric triatomic for the bond length, angle and SCF energy
     """
     shape_lookup = "Symbolic Z-matrix"
     energy_lookup = "SCF Done"
@@ -45,7 +45,7 @@ def parse_out(file):
 
     return ((r, angle), energy)
 
-    
+
 
 # %% ../nbs/01_EnergySurfaces.ipynb 8
 def _func(r,theta, dict):
@@ -102,7 +102,6 @@ def heatmap(dict, fname = None):
 def vib_calc(dict, mass = 1.6735575E-27):
     """
     Calculate optimum bond length and angle and symmetric stretch and bending frequencies.
-    
     Default mass is that of the hydrogen atom
     """
     h_to_J = 4.3597482E-18 # hartree to joule conversion factor
@@ -155,7 +154,7 @@ def vib_calc(dict, mass = 1.6735575E-27):
     zfit = np.polyval(poly, thetafit)
     zquad = np.polyval(quad, thetaquad)
 
-  
+
     plt.plot(theta_adj, ztheta,"ro", markersize=2)
     plt.plot(thetafit, zfit)
     plt.plot(thetaquad, zquad)

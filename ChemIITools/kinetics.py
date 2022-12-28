@@ -55,7 +55,7 @@ def oreg_calc(concs, rates={'k1':1.34, 'k2':1.6e9, 'k3':8e3, 'k4':4e7,'k5':1}):
     Calculates the time dependent concentrations of species in the oregonator system using the Radau method
     """
     # Maximum time, time point spacings and the time grid (all in s).
-    tmax, dt = 120, 0.1
+    tmax, dt = 120, 0.01
     t = np.arange(0, tmax+dt, dt)
 
     conc_t = solve_ivp(_deriv, t_span=(0, tmax), y0 = concs, method='Radau', dense_output=True, t_eval = None,
