@@ -151,5 +151,4 @@ checklink/cookies.txt
 .quarto
 
 # my notes
-scrapbook.ipynb
-scrapbook2.ipynb
+scrapbook*.ipynb
