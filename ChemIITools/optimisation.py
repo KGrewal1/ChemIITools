@@ -5,18 +5,12 @@ __all__ = ['parse_out', 'surface_plot', 'heatmap', 'vib_calc']
 
 # %% ../nbs/01_EnergySurfaces.ipynb 2
 #| echo: false
-import os
 import re
-import linecache
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
 from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
-from scipy.optimize import curve_fit
 
-# %% ../nbs/01_EnergySurfaces.ipynb 5
+# %% ../nbs/01_EnergySurfaces.ipynb 6
 def parse_out(file):
     """
     parses an out file of a symmetric triatomic for the bond length, angle and SCF energy
@@ -29,22 +23,16 @@ def parse_out(file):
     shape_line = None
     with open(file) as myFile:
         for num, line in enumerate(myFile):
-                if shape_lookup in line:
-                        shape_line = num+4
-                if num == shape_line:
-                        r= float(re.findall(r_search,line)[0])
-                        angle= float(re.findall(a_search,line)[0])
-                if energy_lookup in line:
-                         energy= float(re.findall(e_search,line)[0])
-
-
-
-
+            if shape_lookup in line:
+                    shape_line = num+4
+            if num == shape_line:
+                r= float(re.findall(r_search,line)[0])
+                angle= float(re.findall(a_search,line)[0])
+            if energy_lookup in line:
+                energy= float(re.findall(e_search,line)[0])
     return ((r, angle), energy)
 
-
-
-# %% ../nbs/01_EnergySurfaces.ipynb 8
+# %% ../nbs/01_EnergySurfaces.ipynb 9
 def _func(r,theta, dict):
     # dictionary lookup
     return dict[(r,theta)]
@@ -63,7 +51,7 @@ def _dict_to_mesh(dict):
 
     return r,theta, z
 
-# %% ../nbs/01_EnergySurfaces.ipynb 9
+# %% ../nbs/01_EnergySurfaces.ipynb 10
 def surface_plot(dict, fname = None):
     """Plots a surface from the output of the regex"""
     r,theta, z = _dict_to_mesh(dict)
@@ -78,7 +66,7 @@ def surface_plot(dict, fname = None):
         plt.savefig(fname)
     plt.show()
 
-# %% ../nbs/01_EnergySurfaces.ipynb 11
+# %% ../nbs/01_EnergySurfaces.ipynb 12
 def heatmap(dict, fname = None):
     """Plots a heatmap from the output of the regex"""
     r,theta, z = _dict_to_mesh(dict)
@@ -95,7 +83,7 @@ def heatmap(dict, fname = None):
         plt.savefig(fname)
     plt.show()
 
-# %% ../nbs/01_EnergySurfaces.ipynb 13
+# %% ../nbs/01_EnergySurfaces.ipynb 14
 def vib_calc(dict, mass = 1.6735575E-27):
     """
     Calculate optimum bond length and angle and symmetric stretch and bending frequencies.

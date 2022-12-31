@@ -7,9 +7,7 @@ __all__ = ['CoM', 'CoMTransform', 'InertiaTensor', 'point_setup', 'geom_opt', 'S
 #| echo: false
 import numbers
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import basinhopping
 import sympy as sp
 
@@ -22,10 +20,8 @@ def _dist(v1,v2):
     return np.linalg.norm(v1-v2)
 def _vector_sum(*vectors):
     """sums vectors"""
-    sum = np.zeros(shape = vectors[0].shape) #initialises an empty 3d vector
-    for vector in vectors:
-        sum = sum + vector
-    return sum
+    array = np.array([*vectors])
+    return np.sum(array, axis = 0)
 def _fun_gen(f: 'str'):
     """converts a function of r, written as a string into a python function, and a function for its derivative"""
     r = sp.Symbol('r')
@@ -46,7 +42,7 @@ def _calc_setup(function: 'str'):
         for i,v in enumerate(points):
             for w in points[i+1:]:
                 r = _dist(v,w)
-                E = E + 4*((1/r)**12 -(1/r)**6)
+                E = E + U(r)
         return E
     def F_calc(points):
         """The net forces acting on each point"""
@@ -98,9 +94,9 @@ def point_setup(n:'int', seed:'int'=0):
     return np.array(points)
 
 # %% ../nbs/03_Clusters.ipynb 8
-def geom_opt(points:'np.array', F_calc: 'function', iterations = 1000, factor = 1e-4):
+def geom_opt(points:'np.array', F_calc: 'function', iterations: 'int' = 1000, factor: 'float' = 1e-4):
     """optimises geometry of points in 3D space using gradient descent"""
-    for i in range(iterations):
+    for _ in range(iterations):
         forces = F_calc(points)
         points = points + factor*forces
     return points
@@ -147,7 +143,7 @@ class System:
             for v in self.points:
                 print("He %.10f %.10f %.10f" % (v[0], v[1], v[2]))
         else:
-            with open(name,"w+") as f:
+            with open(name,"w+", encoding="utf-8") as f:
                 f.write("%d\n" % (self.n))
                 f.write("Energy %.6f, for %d points, calculated by ChemII tools\n" % (self.E, self.n))
                 for v in self.points:
