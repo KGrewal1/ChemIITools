@@ -13,6 +13,8 @@ pip install ChemIITools
 
 ## How to use
 
+### Solve the Huckel Equation
+
 Easily solve the Huckel equation for complex systems
 
 ``` python
@@ -27,6 +29,8 @@ MO_plot(energy_dict)
 ```
 
 ![](index_files/figure-gfm/cell-4-output-1.png)
+
+### Parse .out files and plot energy surfaces
 
 Plot potential energy surfaces of symmetric triatomics and find the
 vibrational frequencies
@@ -49,3 +53,65 @@ print('the stretching frequency ', round(nu_r), ' cm-1 and bending frequency ', 
 
     the optimum bond length of water is  0.95  angstroms with angle  105.0  degrees
     the stretching frequency  3113  cm-1 and bending frequency  1665  cm-1
+
+### Calculate steady state concentrations
+
+Find the steady state concentration for chemical systems of the form
+$$D  \xrightleftharpoons[k_{u}^{R15}]{k_{f}^{R15}}  I  \xrightleftharpoons[k_{u}^{R16}]{k_{f}^{R16}} N$$
+
+``` python
+kf1 = 26000
+kr1 = 0.06
+kf2 = 730
+kr2 = 0.00075
+urea_conc = np.linspace(0, 8, num=1000)
+ss_conc = []
+for conc in urea_conc:
+    rates = [kf1*np.exp(-1.68*conc), kr1*np.exp(0.95*conc), kf2*np.exp(-1.72*conc), kr2*np.exp(1.20*conc)]
+    ss_conc.append(steady_state_calc(rates))
+ss_conc = np.array(ss_conc)
+plt.plot(urea_conc,ss_conc[:, 0],label='D')
+plt.plot(urea_conc,ss_conc[:, 1],label='I')
+plt.plot(urea_conc,ss_conc[:, 2],label='N')
+plt.xlabel('[Urea]/ M')
+plt.ylabel('Fraction of Species')
+plt.legend()
+plt.show()
+```
+
+![](index_files/figure-gfm/cell-8-output-1.png)
+
+### Caclualte time evolution of a chemical system
+
+``` python
+A, B, X, Y, Z, P, Q = 0.06, 0.06, 10**(-9.8),10**(-6.52), 10**(-7.32), 0, 0
+concs = [A, B, X, Y, Z, P, Q]
+t, conc_t= oreg_calc(concs)
+As, Bs, Xs, Ys, Zs, Ps, Qs = conc_t
+```
+
+``` python
+plt.plot(t[::10000],Xs[::10000],label='X')
+plt.plot(t[::10000],Ys[::10000],label='Y')
+plt.plot(t[::10000],Zs[::10000],label='Z')
+plt.yscale('log')
+plt.xlabel('time/ s')
+plt.ylabel('Concentration/ M')
+plt.legend(bbox_to_anchor =(1.15, 0.6))
+plt.show()
+```
+
+![](index_files/figure-gfm/cell-10-output-1.png)
+
+### Optimise Cluster Geometry
+
+``` python
+lj7 = System(7, '(4*((1/r)**12 -(1/r)**6))')
+lj7.optimise()
+print(lj7)
+lj7.plot()
+```
+
+    Energy -16.505384, for 7 points
+
+![](index_files/figure-gfm/cell-11-output-2.png)
