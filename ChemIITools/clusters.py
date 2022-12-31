@@ -94,7 +94,7 @@ def point_setup(n:'int', seed:'int'=0):
     return np.array(points)
 
 # %% ../nbs/03_Clusters.ipynb 8
-def geom_opt(points:'np.array', F_calc: 'function', iterations: 'int' = 1000, factor: 'float' = 1e-4):
+def geom_opt(points, F_calc, iterations = 1000, factor = 1e-4):
     """optimises geometry of points in 3D space using gradient descent"""
     for _ in range(iterations):
         forces = F_calc(points)
