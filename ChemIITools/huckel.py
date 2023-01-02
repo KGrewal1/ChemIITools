@@ -27,14 +27,14 @@ def generate_smiles(type, n):
     generate the smiles of either a straight chain or ring polyene, with n atoms.
     All carbons will be sp2 hybridised.
     For linear molecules with an odd number of atoms it will return the anion
-    For rings with 4n+1 atoms it will return the anion eg C5H5-    
-    For rings with 4n+3 atoms it will return the cation eg C7H7+   
+    For rings with 4n+1 atoms it will return the anion eg C5H5-
+    For rings with 4n+3 atoms it will return the cation eg C7H7+
     """
-    unit = 'C=C'# the base 2 carbon double bond unit
+    unit = 'C=C' # the base 2 carbon double bond unit
     if n<3: type = 'linear' #ring needs at least 3 atoms
-    if n <=1: 
+    if n <=1:
         raise Exception("More than 1 Carbon atoms is needed")
-    if not isinstance(n, int): 
+    if not isinstance(n, int):
         raise Exception("An integer number of atoms is needed")
     if type == 'linear':
         repeats = n//2 # repeats of the base unit of 2 carbons
@@ -52,7 +52,7 @@ def Huckel_solve(SMILES):
     """
     From a SMILES input, create an adjacency matrix, and use that to solve the for the Huckel pi system
     Returns a dictionary of energy levels with the associated (possibly degenerate) wavefunctions and the RDKit molecule
-    This only considers 1 sort of p orbital and treats alpha =0 and beta = -1
+    This only considers one sort of p orbital and treats alpha =0 and beta = -1
     """
     molecule = Chem.MolFromSmiles(SMILES)
     mat = -Chem.GetAdjacencyMatrix(molecule)
@@ -84,7 +84,7 @@ def MO_plot(dict):
         x = np.arange(-(0.5*(degeneracy - 1)),(0.5*(degeneracy)), 1)
         y = [level]*(degeneracy)
         ax.scatter(x, y, s =900, marker = '_', linewidth = 3)
-    plt.show
+    plt.show()
 
 # %% ../nbs/00_HuckelSolver.ipynb 8
 class Huckel:
