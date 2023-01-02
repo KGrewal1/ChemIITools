@@ -18,14 +18,17 @@ pip install ChemIITools
 Easily solve the Huckel equation for complex systems
 
 ``` python
-molecule, energy_dict = Huckel_solve("c1cc2ccc3ccc4ccc5ccc6ccc1c7c2c3c4c5c67")
-molecule
+mol = Huckel("c1cc2ccc3ccc4ccc5ccc6ccc1c7c2c3c4c5c67")
+print(mol)
+mol.molecule
 ```
 
-![](index_files/figure-gfm/cell-3-output-1.svg)
+    Huckel Energies (degeneracy) for c1cc2ccc3ccc4ccc5ccc6ccc1c7c2c3c4c5c67: [-2.675 (1)]  [-2.214 (2)]  [-1.675 (2)]  [-1.539 (1)]  [-1.214 (1)]  [-1.000 (3)]  [-0.539 (2)]  [0.539 (2)]  [1.000 (3)]  [1.214 (1)]  [1.539 (1)]  [1.675 (2)]  [2.214 (2)]  [2.675 (1)] 
+
+![](index_files/figure-gfm/cell-3-output-2.svg)
 
 ``` python
-MO_plot(energy_dict)
+mol.plot()
 ```
 
 ![](index_files/figure-gfm/cell-4-output-1.png)
@@ -46,10 +49,6 @@ r_opt, theta_opt, nu_r, nu_theta = vib_calc(h2o_vals)
 print('the optimum bond length of water is ', r_opt, ' angstroms with angle ', theta_opt, ' degrees' )
 print('the stretching frequency ', round(nu_r), ' cm-1 and bending frequency ', round(nu_theta), ' cm-1' )
 ```
-
-![](index_files/figure-gfm/cell-7-output-1.png)
-
-![](index_files/figure-gfm/cell-7-output-2.png)
 
     the optimum bond length of water is  0.95  angstroms with angle  105.0  degrees
     the stretching frequency  3113  cm-1 and bending frequency  1665  cm-1

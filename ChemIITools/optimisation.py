@@ -57,10 +57,10 @@ def surface_plot(dict, fname = None):
     r,theta, z = _dict_to_mesh(dict)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(r,theta, z, cmap=cm.viridis_r, linewidth=0)
-    plt.xlabel('Bond Length/ $\AA$')
-    plt.ylabel('Bond Angle/ $^\circ$')
-    ax.set_zlabel('Energy/ $E_{h}$')
+    surf = ax.plot_surface(r,theta, z, cmap=cm.plasma, linewidth=0)
+    plt.xlabel('Bond Length / $\AA$')
+    plt.ylabel('Bond Angle / $^\circ$')
+    ax.set_zlabel('\nEnergy / $E_{h}$', linespacing=2.8)
     fig.tight_layout()
     if fname is not None:
         plt.savefig(fname)
@@ -73,18 +73,18 @@ def heatmap(dict, fname = None):
     z_min, z_max = z.min(), z.max()
     fig, ax = plt.subplots()
 
-    c = ax.pcolormesh(r,theta, z, cmap=cm.viridis_r, vmin=z_min, vmax=z_max)
+    c = ax.pcolormesh(r,theta, z, cmap=cm.plasma, vmin=z_min, vmax=z_max)
     # set the limits of the plot to the limits of the data
     ax.axis([r.min(), r.max(), theta.min(), theta.max()])
     fig.colorbar(c, ax=ax)
-    plt.xlabel('Bond Length/ $\AA$')
-    plt.ylabel('Bond Angle/ $^\circ$')
+    plt.xlabel('Bond Length / $\AA$')
+    plt.ylabel('Bond Angle / $^\circ$')
     if fname is not None:
         plt.savefig(fname)
     plt.show()
 
 # %% ../nbs/01_EnergySurfaces.ipynb 14
-def vib_calc(dict, mass = 1.6735575E-27):
+def vib_calc(dict, mass = 1.6735575E-27, plot = False):
     """
     Calculate optimum bond length and angle and symmetric stretch and bending frequencies.
     Default mass is that of the hydrogen atom
@@ -100,12 +100,12 @@ def vib_calc(dict, mass = 1.6735575E-27):
     zr = [] # with constant theta
     ztheta = [] # with constant r
 
-    for R in r:
-        zr.append(dict[(R, theta_opt)]*h_to_J)
+    for length in r:
+        zr.append(dict[(length, theta_opt)]*h_to_J)
 
     zr = np.array(zr)
     r_adj = (r - r_opt)*A_to_m
-    rslice = (r_adj>=.25*r_adj.min()) & (r_adj<=.25*r_adj.max())
+    rslice = (r_adj>=.25*r_adj.min()) & (r_adj<=.25*r_adj.max()) # the quadratic is fitted on these points
     rfit = np.linspace(r_adj.min(), r_adj.max(), 1000)
     rquad = np.linspace(.4*r_adj.min(), .4*r_adj.max(), 1000)
 
@@ -113,24 +113,24 @@ def vib_calc(dict, mass = 1.6735575E-27):
     quad = np.polyfit(r_adj [rslice], zr[rslice], 2)
     zfit = np.polyval(poly, rfit)
     zquad = np.polyval(quad, rquad)
-
-    plt.plot(r_adj, zr,"ro")
-    plt.plot(rfit, zfit)
-    plt.plot(rquad, zquad)
-    plt.xlabel('Bond Length from Optimum/ m')
-    plt.ylabel('Energy/ J')
-    plt.show()
+    if plot:
+        plt.plot(r_adj, zr,"ro")
+        plt.plot(rfit, zfit)
+        plt.plot(rquad, zquad)
+        plt.xlabel('Bond Length from Optimum/ m')
+        plt.ylabel('Energy/ J')
+        plt.show()
 
     kr = 2*quad[0]
     mu_1 = 2*mass
     nu_r = np.sqrt(kr/mu_1)/(2*np.pi)
 
-    for Theta in theta:
-        ztheta.append(dict[(r_opt, Theta)]*h_to_J)
+    for angle in theta:
+        ztheta.append(dict[(r_opt, angle)]*h_to_J)
 
     ztheta = np.array(ztheta)
     theta_adj = (theta-theta_opt)*deg_to_r
-    thetaslice = (theta_adj>=.25*theta_adj.min()) & (theta_adj<=.25*theta_adj.max())
+    thetaslice = (theta_adj>=.25*theta_adj.min()) & (theta_adj<=.25*theta_adj.max()) # the quadratic is fitted on these points
 
     thetafit = np.linspace(theta_adj.min(), theta_adj.max(), 1000)
     thetaquad = np.linspace(.4*theta_adj.min(), .4*theta_adj.max(), 1000)
@@ -139,13 +139,13 @@ def vib_calc(dict, mass = 1.6735575E-27):
     zfit = np.polyval(poly, thetafit)
     zquad = np.polyval(quad, thetaquad)
 
-
-    plt.plot(theta_adj, ztheta,"ro", markersize=2)
-    plt.plot(thetafit, zfit)
-    plt.plot(thetaquad, zquad)
-    plt.xlabel('Bond Angle from Optimum/ rad')
-    plt.ylabel('Energy/ J')
-    plt.show()
+    if plot:
+        plt.plot(theta_adj, ztheta,"ro", markersize=2)
+        plt.plot(thetafit, zfit)
+        plt.plot(thetaquad, zquad)
+        plt.xlabel('Bond Angle from Optimum/ rad')
+        plt.ylabel('Energy/ J')
+        plt.show()
 
     ktheta = 2*quad[0]
     mu_2 = 0.5*mass

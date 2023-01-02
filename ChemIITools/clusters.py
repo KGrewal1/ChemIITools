@@ -103,6 +103,7 @@ def geom_opt(points, F_calc, iterations = 1000, factor = 1e-4):
 
 # %% ../nbs/03_Clusters.ipynb 9
 class System:
+    """A cluster system, defined by n points and a pairwise potential in term of r, given as a string"""
     def __init__(self, n:"int"=7, function:"str"='(4*((1/r)**12 -(1/r)**6))'):
         self.n = n
         self.U, self.F = _calc_setup(function)
