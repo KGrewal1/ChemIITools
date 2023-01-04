@@ -109,9 +109,27 @@ class System:
                  function:str='(4*((1/r)**12 -(1/r)**6))' # the pairwise potential between any two atoms in the cluster
                  ):
         self.n = n
-        self.U, self.F = _calc_setup(function)
+        self._function = function
         self.points = point_setup(n)
-        self.E = self.U(self.points)
+        self._U, self._F = _calc_setup(function)
+
+    @property
+    def function(self):
+        return self._function
+
+    @function.setter
+    def function(self, value):
+        self._function = value
+        self._U, self._F = _calc_setup(value)
+
+    @property
+    def E(self):
+        return self._U(self.points)
+    @E.setter
+    def E(self, value):
+        raise Exception("Energy is determined by geometry and so read only")
+
+
     def plot(self):
         x, y, z = self.points.transpose()
         fig = plt.figure()
@@ -122,24 +140,30 @@ class System:
         ax.axes.set_zlim3d(-1.2, 1.2)
         ax.set_box_aspect([1,1,1])
         plt.show()
+
+
+
+
     def optimise(self, riter:int=10000, giter:int=1000, gfactor:int=1e-4, biter:int=100):
         for i in range(riter):
             x = point_setup(self.n,i)
-            E = self.U(x)
+            E = self._U(x)
             if E<self.E:
                 self.points = x
-                self.E = E
-        self.points = geom_opt(self.points, self.F, iterations=giter, factor = gfactor)
+        self.points = geom_opt(self.points, self._F, iterations=giter, factor = gfactor)
         self.points = CoMTransform(*self.points)
-        self.E = self.U(self.points)
         minimizer_kwargs = {"method": "BFGS"}
-        res = basinhopping(self.U, self.points.flatten(), minimizer_kwargs=minimizer_kwargs,
+        res = basinhopping(self._U, self.points.flatten(), minimizer_kwargs=minimizer_kwargs,
                         niter=biter)
         self.points = res.x.reshape(-1,3)
         self.points = np.array(CoMTransform(*self.points))
-        self.E = res.fun
+
+
+
     def __str__(self):
-        return ("Energy %.6f, for %d points" % (self.E, self.n))
+        return "Energy %.6f, for %d points" % (self.E, self.n)
+
+
     def xyz(self, name = None):
         """Returns the coordinates of the system in .xyz format"""
         if name is None:

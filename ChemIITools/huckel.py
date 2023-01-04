@@ -22,7 +22,7 @@ norm = matplotlib.colors.Normalize(vmin=-1, vmax=1, clip=True)
 mapper = cm.ScalarMappable(norm=norm, cmap='coolwarm')
 
 # %% ../nbs/00_HuckelSolver.ipynb 5
-def generate_smiles(sort:str, # linear or ring
+def generate_smiles(l_or_r:str, # linear or ring
                     n:int     # the number of atoms in the molecule
                     ):
     """
@@ -33,16 +33,16 @@ def generate_smiles(sort:str, # linear or ring
     For rings with 4n+3 atoms it will return the cation eg C7H7+
     """
     unit = 'C=C' # the base 2 carbon double bond unit
-    if n<3: sort = 'linear' #ring needs at least 3 atoms
+    if n<3: l_or_r = 'linear' #ring needs at least 3 atoms
     if n <=1:
         raise Exception("More than 1 Carbon atoms is needed")
     if not isinstance(n, int):
         raise Exception("An integer number of atoms is needed")
-    if sort == 'linear':
+    if l_or_r == 'linear':
         repeats = n//2 # repeats of the base unit of 2 carbons
         terminal = n%2 # whether or not a terminal carbon is needed
         output = repeats*unit +terminal*"[CH2+]"
-    if sort == 'ring':
+    if l_or_r == 'ring':
         repeats = n//2 # repeats of the base unit of 2 carbons
         cation_terminal = 1 if n%4==3 else 0 # if 4n+3 carbon atoms: cation eg C7H7+
         anion_terminal = 1 if n%4==1 else 0 # if 4n+3 carbon atoms: cation eg C5H5-

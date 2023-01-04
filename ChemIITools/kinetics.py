@@ -57,6 +57,17 @@ def oreg_calc(concs:list, # the concentrations [A,B,X,Y,Z,P,Q]
             rk_1 = _deriv(1, c, k1,k2,k3,k4,k5)
             rk_1 = np.array(rk_1)
             conc_t[i+1]= c + rk_1*dt
+    elif method == 'midpoint':
+        for i, c in enumerate(conc_t[:-1]):
+            rk_1 = np.array(_deriv(1, c, k1,k2,k3,k4,k5))
+            rk_2 = np.array(_deriv(1, c+dt*rk_1/2, k1,k2,k3,k4,k5))
+            conc_t[i+1]=c+dt*(rk_2)
+    elif method == 'Heun3':
+        for i, c in enumerate(conc_t[:-1]):
+            rk_1 = np.array(_deriv(1, c, k1,k2,k3,k4,k5))
+            rk_2 = np.array(_deriv(1, c+dt*rk_1/3, k1,k2,k3,k4,k5))
+            rk_3 = np.array(_deriv(1, c+dt*2*rk_2/3, k1,k2,k3,k4,k5))
+            conc_t[i+1]=c+dt*(rk_1+3*rk_3)/4
     elif method == 'SSPRK3':
         for i, c in enumerate(conc_t[:-1]):
             rk_1 = np.array(_deriv(1, c, k1,k2,k3,k4,k5))
@@ -71,6 +82,6 @@ def oreg_calc(concs:list, # the concentrations [A,B,X,Y,Z,P,Q]
             rk_4 = np.array(_deriv(1, c+dt*rk_3, k1,k2,k3,k4,k5))
             conc_t[i+1]=c+dt*(rk_1+2*rk_2+2*rk_3+rk_4)/6
     else:
-        raise ValueError('The only method currently implemented are Euler, SSPRK3 and RK4')
+        raise ValueError('The only method currently implemented are Euler, midpoint, Heun3, SSPRK3 and RK4')
     conc_t = conc_t.transpose()
     return t, conc_t
