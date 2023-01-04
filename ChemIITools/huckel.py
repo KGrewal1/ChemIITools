@@ -45,14 +45,14 @@ def generate_smiles(type, n):
         cation_terminal = 1 if n%4==3 else 0 # if 4n+3 carbon atoms: cation eg C7H7+
         anion_terminal = 1 if n%4==1 else 0 # if 4n+3 carbon atoms: cation eg C5H5-
         output = "C1=C" +(repeats-1)*unit +anion_terminal*"[CH-]"+cation_terminal*"[CH+]"+"1"
-    return(output)
+    return output
 
 # %% ../nbs/00_HuckelSolver.ipynb 6
 def Huckel_solve(SMILES):
     """
-    From a SMILES input, create an adjacency matrix, and use that to solve the for the Huckel pi system
+    From a SMILES input, create an adjacency matrix, and use that to solve for the Huckel pi system
     Returns a dictionary of energy levels with the associated (possibly degenerate) wavefunctions and the RDKit molecule
-    This only considers one sort of p orbital and treats alpha =0 and beta = -1
+    This only considers one sort of p orbital and treats alpha = 0 and beta = -1
     """
     molecule = Chem.MolFromSmiles(SMILES)
     mat = -Chem.GetAdjacencyMatrix(molecule)
@@ -63,12 +63,13 @@ def Huckel_solve(SMILES):
         # pythons eigenvalues sometimes produce rounding errors at the 14th dp: eg eigenvalues for benzene being 1.0 and 0.9999999999999998
         # similarly, trivial imaginary parts are occasionally produced: on the order of 10^-16 i
         val = round(np.real(val), 3)
-        if val in energy_dict:energy_dict[val].append(vecs[:,i])
+        if val in energy_dict:
+            energy_dict[val].append(vecs[:,i])
         else: energy_dict[val]=[vecs[:,i]]
     return molecule, energy_dict
 
 # %% ../nbs/00_HuckelSolver.ipynb 7
-def MO_plot(dict):
+def MO_plot(e_dict):
     """
     Plots an MO diagram based on a dictionary of energy levels and associated wavefunctions
     """
@@ -79,8 +80,8 @@ def MO_plot(dict):
     bottom=False,      # ticks along the bottom edge are off
     top=False,         # ticks along the top edge are off
     labelbottom=False) # labels along the bottom edge are off
-    for level in dict:
-        degeneracy = len(dict[level])
+    for level in e_dict:
+        degeneracy = len(e_dict[level])
         x = np.arange(-(0.5*(degeneracy - 1)),(0.5*(degeneracy)), 1)
         y = [level]*(degeneracy)
         ax.scatter(x, y, s =900, marker = '_', linewidth = 3)
@@ -89,7 +90,7 @@ def MO_plot(dict):
 # %% ../nbs/00_HuckelSolver.ipynb 8
 class Huckel:
     """The solution to the Huckel equation for a molecule given as SMILES"""
-    def __init__(self, SMILES:"str"="c1ccccc1"):
+    def __init__(self, SMILES:str="c1ccccc1"):
         self.smiles = SMILES
         self.molecule, self.energy_dict = Huckel_solve(SMILES)
     def plot(self):

@@ -64,11 +64,7 @@ kr1 = 0.06
 kf2 = 730
 kr2 = 0.00075
 urea_conc = np.linspace(0, 8, num=1000)
-ss_conc = []
-for conc in urea_conc:
-    rates = [kf1*np.exp(-1.68*conc), kr1*np.exp(0.95*conc), kf2*np.exp(-1.72*conc), kr2*np.exp(1.20*conc)]
-    ss_conc.append(steady_state_calc(rates))
-ss_conc = np.array(ss_conc)
+ss_conc = np.array([steady_state_calc(kf1*np.exp(-1.68*conc), kr1*np.exp(0.95*conc), kf2*np.exp(-1.72*conc), kr2*np.exp(1.20*conc)) for conc in urea_conc])
 plt.plot(urea_conc,ss_conc[:, 0],label='D')
 plt.plot(urea_conc,ss_conc[:, 1],label='I')
 plt.plot(urea_conc,ss_conc[:, 2],label='N')

@@ -24,7 +24,7 @@ def parse_out(file):
     with open(file) as myFile:
         for num, line in enumerate(myFile):
             if shape_lookup in line:
-                    shape_line = num+4
+                shape_line = num+4
             if num == shape_line:
                 r= float(re.findall(r_search,line)[0])
                 angle= float(re.findall(a_search,line)[0])

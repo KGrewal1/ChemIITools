@@ -22,7 +22,7 @@ def _vector_sum(*vectors):
     """sums vectors"""
     array = np.array([*vectors])
     return np.sum(array, axis = 0)
-def _fun_gen(f: 'str'):
+def _fun_gen(f: str):
     """converts a function of r, written as a string into a python function, and a function for its derivative"""
     r = sp.Symbol('r')
     y = sp.sympify(f)
@@ -32,7 +32,7 @@ def _fun_gen(f: 'str'):
     if not isinstance(2*f(2.2), numbers.Number):
         raise ValueError('Please enter a function purely of "r"')
     return f, fprime
-def _calc_setup(function: 'str'):
+def _calc_setup(function: str):
     """converts pairwise energies and forces, to total energy and net force on each point"""
     U, dU = _fun_gen(function)
     def E_calc(points):
@@ -85,7 +85,7 @@ def InertiaTensor(*vectors):
     return np.matrix([[Ixx, Ixy, Ixz], [Ixy, Iyy, Iyz], [Ixz, Iyz, Izz]])
 
 # %% ../nbs/03_Clusters.ipynb 7
-def point_setup(n:'int', seed:'int'=0):
+def point_setup(n:int, seed:int=0):
     """returns n points distributed on the unit sphere"""
     np.random.seed(seed)
     points = np.random.randn(3, n)
@@ -104,7 +104,7 @@ def geom_opt(points, F_calc, iterations = 1000, factor = 1e-4):
 # %% ../nbs/03_Clusters.ipynb 9
 class System:
     """A cluster system, defined by n points and a pairwise potential in term of r, given as a string"""
-    def __init__(self, n:"int"=7, function:"str"='(4*((1/r)**12 -(1/r)**6))'):
+    def __init__(self, n:int=7, function:str='(4*((1/r)**12 -(1/r)**6))'):
         self.n = n
         self.U, self.F = _calc_setup(function)
         self.points = point_setup(n)
@@ -119,7 +119,7 @@ class System:
         ax.axes.set_zlim3d(-1.2, 1.2)
         ax.set_box_aspect([1,1,1])
         plt.show()
-    def optimise(self, riter:'int'=10000, giter:'int'=1000, gfactor:'int'=1e-4, biter:'int'=100):
+    def optimise(self, riter:int=10000, giter:int=1000, gfactor:int=1e-4, biter:int=100):
         for i in range(riter):
             x = point_setup(self.n,i)
             E = self.U(x)
@@ -138,6 +138,7 @@ class System:
     def __str__(self):
         return ("Energy %.6f, for %d points" % (self.E, self.n))
     def xyz(self, name = None):
+        """Returns the coordinates of the system in .xyz format"""
         if name is None:
             print(self.n)
             print("Energy %.6f, for %d points, calculated by ChemII tools" % (self.E, self.n))
