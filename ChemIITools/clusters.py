@@ -106,7 +106,7 @@ class System:
     """A cluster system, defined by n points and a pairwise potential in term of r, given as a string"""
     def __init__(self,
                  n:int=7, # the number of atoms in the cluster
-                 function:str='(4*((1/r)**12 -(1/r)**6))' # the pairwise potential between any two atoms in the cluster
+                 function:str='(4*((1/r)^12 -(1/r)^6))' # the pairwise potential between any two atoms in the cluster
                  ):
         self.n = n
         self._function = function
@@ -144,7 +144,12 @@ class System:
 
 
 
-    def optimise(self, riter:int=10000, giter:int=1000, gfactor:int=1e-4, biter:int=100):
+    def optimise(self,
+                 riter:int=10000, # the number of random initial configurations to consider
+                 giter:int=1000,  # the number of gradient descent iterations to consider
+                 gfactor:int=1e-4,# the factor for the gradient descent
+                 biter:int=100    # the number of basin hopping iterations to perform
+                 ):
         for i in range(riter):
             x = point_setup(self.n,i)
             E = self._U(x)
