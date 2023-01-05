@@ -170,7 +170,7 @@ class System:
 
 
     def xyz(self,
-            name = None # name of file to save to: if None prints
+            name:str = None # name of file to save to: if None prints
             ):
         """Returns the coordinates of the system in .xyz format"""
         if name is None:
