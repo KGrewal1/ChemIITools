@@ -6,7 +6,6 @@ __all__ = ['CoM', 'CoMTransform', 'InertiaTensor', 'point_setup', 'geom_opt', 'S
 # %% ../nbs/03_Clusters.ipynb 2
 #| echo: false
 import numbers
-from typing import Optional
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import basinhopping
@@ -171,7 +170,7 @@ class System:
 
 
     def xyz(self,
-            name: Optional[str] = None # name of file to save to: if None prints
+            name = None # name of file to save to: if None prints
             ):
         """Returns the coordinates of the system in .xyz format"""
         if name is None:
