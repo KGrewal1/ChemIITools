@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Constructs the Huckel matrix and solves for the values, based on Ex 3.1 instructions">
+
+<title>ChemIITools - Generalised Huckel Solver</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="ChemIITools - Generalised Huckel Solver">
+<meta property="og:description" content="Constructs the Huckel matrix and solves for the values, based on Ex 3.1 instructions">
+<meta property="og:site-name" content="ChemIITools">
+<meta name="twitter:title" content="ChemIITools - Generalised Huckel Solver">
+<meta name="twitter:description" content="Constructs the Huckel matrix and solves for the values, based on Ex 3.1 instructions">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">ChemIITools</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Generalised Huckel Solver</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">ChemIITools</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./huckelsolver.html" class="sidebar-item-text sidebar-link active">Generalised Huckel Solver</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./energysurfaces.html" class="sidebar-item-text sidebar-link">Energy Surface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kinetics.html" class="sidebar-item-text sidebar-link">Chemical Kinetics</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clusters.html" class="sidebar-item-text sidebar-link">Cluster Optimisation</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#generate_smiles" id="toc-generate_smiles" class="nav-link active" data-scroll-target="#generate_smiles">generate_smiles</a></li>
+  <li><a href="#huckel_solve" id="toc-huckel_solve" class="nav-link" data-scroll-target="#huckel_solve">Huckel_solve</a></li>
+  <li><a href="#huckel" id="toc-huckel" class="nav-link" data-scroll-target="#huckel">Huckel</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/KGrewal1/ChemIITools/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Generalised Huckel Solver</h1>
+</div>
+
+<div>
+  <div class="description">
+    Constructs the Huckel matrix and solves for the values, based on Ex 3.1 instructions
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>This solver will only work if all <span class="math inline">\(p\)</span> orbitals are equivalent (it will not consider for instance perturbations due to nitrogen in pyridine). The Huckel theory assumptions are: <span class="math display">\[ H_{ij}= \begin{cases} \alpha,\  i=j\\ \beta,\  i \text{ adjacent to } j\\ 0,\  \text{otherwise}\end{cases} \]</span> with scaling such that <span class="math inline">\(\alpha = 0\)</span> and <span class="math inline">\(\beta =-1\)</span>. As such, it can be seen that the resulting Huckel matrix is the negative of the adjacency matrix <span class="math inline">\(A\)</span> where: <span class="math display">\[ A_{ij}= \begin{cases}  1,\  i \text{ adjacent to } j\\ 0,\  \text{otherwise}\end{cases} \]</span></p>
+<hr>
+<p><a href="https://github.com/KGrewal1/ChemIITools/blob/main/ChemIITools/huckel.py#L21" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="generate_smiles" class="level3">
+<h3 class="anchored" data-anchor-id="generate_smiles">generate_smiles</h3>
+<blockquote class="blockquote">
+<pre><code> generate_smiles (l_or_r:str, n:int)</code></pre>
+</blockquote>
+<p>generate the smiles of either a straight chain or ring polyene, with n atoms. All carbons will be sp2 hybridised. For linear molecules with an odd number of atoms it will return the anion For rings with 4n+1 atoms it will return the anion eg C5H5- For rings with 4n+3 atoms it will return the cation eg C7H7+</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>l_or_r</td>
+<td>str</td>
+<td>linear or ring</td>
+</tr>
+<tr class="even">
+<td>n</td>
+<td>int</td>
+<td>the number of atoms in the molecule</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/KGrewal1/ChemIITools/blob/main/ChemIITools/huckel.py#L49" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="huckel_solve" class="level3">
+<h3 class="anchored" data-anchor-id="huckel_solve">Huckel_solve</h3>
+<blockquote class="blockquote">
+<pre><code> Huckel_solve (matrix)</code></pre>
+</blockquote>
+<p>From a Huckel matrix input, solve for the Huckel pi system Returns a dictionary of energy levels with the associated (possibly degenerate) wavefunctions</p>
+<hr>
+<p><a href="https://github.com/KGrewal1/ChemIITools/blob/main/ChemIITools/huckel.py#L67" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="huckel" class="level3">
+<h3 class="anchored" data-anchor-id="huckel">Huckel</h3>
+<blockquote class="blockquote">
+<pre><code> Huckel (SMILES:str='c1ccccc1')</code></pre>
+</blockquote>
+<p>The solution to the Huckel equation for a molecule given as SMILES</p>
+<p>This works in a straightforward manner for chains and rings</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> generate_smiles(<span class="st">'linear'</span>, <span class="dv">10</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> Huckel(mol)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mol.molecule</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for C=CC=CC=CC=CC=C: [-1.919 (1)]  [-1.683 (1)]  [-1.310 (1)]  [-0.831 (1)]  [-0.285 (1)]  [0.285 (1)]  [0.831 (1)]  [1.310 (1)]  [1.683 (1)]  [1.919 (1)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<!--?xml version='1.0' encoding='iso-8859-1'?-->
+<svg version="1.1" baseprofile="full" xmlns="http://www.w3.org/2000/svg" xmlns:rdkit="http://www.rdkit.org/xml" xlink="http://www.w3.org/1999/xlink" space="preserve" width="450px" height="150px" viewbox="0 0 450 150">
+<!-- END OF HEADER -->
+<rect style="opacity:1.0;fill:#FFFFFF;stroke:none" width="450.0" height="150.0" x="0.0" y="0.0"> </rect>
+<path class="bond-0 atom-0 atom-1" d="M 27.2,84.1 L 71.6,59.5" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-0 atom-0 atom-1" d="M 30.9,90.8 L 71.4,68.3" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-1 atom-1 atom-2" d="M 71.6,59.5 L 115.0,85.7" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-2 atom-2 atom-3" d="M 115.0,85.7 L 159.4,61.1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-2 atom-2 atom-3" d="M 115.2,76.9 L 155.7,54.4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-3 atom-3 atom-4" d="M 159.4,61.1 L 202.9,87.2" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-4 atom-4 atom-5" d="M 202.9,87.2 L 247.3,62.6" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-4 atom-4 atom-5" d="M 203.0,78.4 L 243.6,56.0" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-5 atom-5 atom-6" d="M 247.3,62.6 L 290.7,88.8" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-6 atom-6 atom-7" d="M 290.7,88.8 L 335.1,64.2" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-6 atom-6 atom-7" d="M 290.9,80.0 L 331.4,57.5" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-7 atom-7 atom-8" d="M 335.1,64.2 L 378.6,90.3" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-8 atom-8 atom-9" d="M 378.6,90.3 L 423.0,65.8" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-8 atom-8 atom-9" d="M 378.7,81.6 L 419.3,59.1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path d="M 69.3,60.8 L 71.6,59.5 L 73.7,60.8" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 112.9,84.4 L 115.0,85.7 L 117.2,84.4" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 157.2,62.3 L 159.4,61.1 L 161.6,62.4" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 200.7,85.9 L 202.9,87.2 L 205.1,86.0" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 245.0,63.9 L 247.3,62.6 L 249.4,64.0" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 288.6,87.5 L 290.7,88.8 L 293.0,87.6" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 332.9,65.4 L 335.1,64.2 L 337.3,65.5" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 376.4,89.0 L 378.6,90.3 L 380.8,89.1" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path class="note" d="M 23.1 80.4
+Q 21.8 80.4, 21.1 79.5
+Q 20.5 78.5, 20.5 76.8
+Q 20.5 75.0, 21.1 74.1
+Q 21.8 73.1, 23.1 73.1
+Q 24.4 73.1, 25.1 74.1
+Q 25.7 75.0, 25.7 76.8
+Q 25.7 78.5, 25.1 79.5
+Q 24.4 80.4, 23.1 80.4
+M 23.1 79.6
+Q 23.9 79.6, 24.3 78.9
+Q 24.7 78.2, 24.7 76.8
+Q 24.7 75.4, 24.3 74.6
+Q 23.9 73.9, 23.1 73.9
+Q 22.3 73.9, 21.9 74.6
+Q 21.5 75.4, 21.5 76.8
+Q 21.5 78.2, 21.9 78.9
+Q 22.3 79.6, 23.1 79.6
+" fill="#000000"></path>
+<path class="note" d="M 69.9 53.9
+L 71.5 53.9
+L 71.5 48.5
+L 69.8 49.1
+L 69.5 48.5
+L 71.7 47.5
+L 72.5 47.6
+L 72.5 53.9
+L 73.9 53.9
+L 73.9 54.7
+L 69.9 54.7
+L 69.9 53.9
+" fill="#000000"></path>
+<path class="note" d="M 112.5 91.9
+Q 112.7 91.3, 113.4 90.9
+Q 114.0 90.5, 114.9 90.5
+Q 116.0 90.5, 116.6 91.1
+Q 117.2 91.7, 117.2 92.7
+Q 117.2 93.8, 116.4 94.8
+Q 115.6 95.8, 114.0 97.0
+L 117.3 97.0
+L 117.3 97.8
+L 112.5 97.8
+L 112.5 97.1
+Q 113.8 96.1, 114.6 95.4
+Q 115.4 94.7, 115.8 94.1
+Q 116.2 93.4, 116.2 92.8
+Q 116.2 92.1, 115.8 91.7
+Q 115.5 91.3, 114.9 91.3
+Q 114.3 91.3, 113.9 91.5
+Q 113.5 91.8, 113.3 92.3
+L 112.5 91.9
+" fill="#000000"></path>
+<path class="note" d="M 160.6 52.5
+Q 161.3 52.7, 161.6 53.1
+Q 162.0 53.6, 162.0 54.3
+Q 162.0 54.9, 161.7 55.4
+Q 161.4 55.9, 160.8 56.1
+Q 160.2 56.4, 159.5 56.4
+Q 158.7 56.4, 158.2 56.1
+Q 157.6 55.8, 157.1 55.3
+L 157.7 54.7
+Q 158.2 55.2, 158.5 55.4
+Q 158.9 55.6, 159.5 55.6
+Q 160.2 55.6, 160.6 55.2
+Q 161.0 54.9, 161.0 54.3
+Q 161.0 53.6, 160.5 53.2
+Q 160.1 52.9, 159.2 52.9
+L 158.7 52.9
+L 158.7 52.2
+L 159.2 52.2
+Q 160.0 52.2, 160.4 51.8
+Q 160.8 51.5, 160.8 50.8
+Q 160.8 50.4, 160.5 50.1
+Q 160.1 49.8, 159.5 49.8
+Q 158.9 49.8, 158.5 50.0
+Q 158.2 50.2, 157.9 50.8
+L 157.2 50.4
+Q 157.5 49.8, 158.1 49.4
+Q 158.7 49.0, 159.5 49.0
+Q 160.6 49.0, 161.2 49.5
+Q 161.8 50.0, 161.8 50.8
+Q 161.8 51.4, 161.5 51.8
+Q 161.2 52.3, 160.6 52.5
+" fill="#000000"></path>
+<path class="note" d="M 204.6 96.8
+L 205.5 96.8
+L 205.5 97.6
+L 204.6 97.6
+L 204.6 99.3
+L 203.7 99.3
+L 203.7 97.6
+L 200.0 97.6
+L 200.0 97.0
+L 203.1 92.1
+L 204.6 92.1
+L 204.6 96.8
+M 201.1 96.8
+L 203.7 96.8
+L 203.7 92.7
+L 201.1 96.8
+" fill="#000000"></path>
+<path class="note" d="M 247.6 53.3
+Q 248.2 53.3, 248.7 53.6
+Q 249.2 53.8, 249.5 54.3
+Q 249.8 54.8, 249.8 55.5
+Q 249.8 56.3, 249.5 56.8
+Q 249.1 57.3, 248.5 57.6
+Q 247.9 57.9, 247.3 57.9
+Q 246.6 57.9, 246.0 57.6
+Q 245.4 57.4, 245.0 56.9
+L 245.6 56.3
+Q 245.9 56.6, 246.4 56.9
+Q 246.8 57.0, 247.3 57.0
+Q 247.9 57.0, 248.4 56.6
+Q 248.8 56.3, 248.8 55.5
+Q 248.8 54.8, 248.4 54.4
+Q 247.9 54.1, 247.2 54.1
+Q 246.6 54.1, 245.9 54.3
+L 245.4 54.1
+L 245.7 50.6
+L 249.4 50.6
+L 249.3 51.4
+L 246.5 51.4
+L 246.3 53.5
+Q 247.0 53.3, 247.6 53.3
+" fill="#000000"></path>
+<path class="note" d="M 290.9 96.4
+Q 291.5 96.4, 292.0 96.7
+Q 292.5 96.9, 292.8 97.4
+Q 293.1 97.9, 293.1 98.6
+Q 293.1 99.3, 292.8 99.8
+Q 292.5 100.3, 291.9 100.6
+Q 291.4 101.0, 290.7 101.0
+Q 289.4 101.0, 288.7 100.1
+Q 288.1 99.2, 288.1 97.5
+Q 288.1 95.6, 288.9 94.6
+Q 289.7 93.6, 291.2 93.6
+Q 291.7 93.6, 292.0 93.7
+Q 292.4 93.8, 292.8 94.0
+L 292.4 94.7
+Q 291.9 94.4, 291.2 94.4
+Q 290.2 94.4, 289.7 95.1
+Q 289.2 95.7, 289.1 97.1
+Q 289.5 96.7, 289.9 96.6
+Q 290.4 96.4, 290.9 96.4
+M 290.7 100.1
+Q 291.1 100.1, 291.4 99.9
+Q 291.7 99.7, 291.9 99.4
+Q 292.1 99.0, 292.1 98.6
+Q 292.1 97.9, 291.7 97.6
+Q 291.3 97.2, 290.7 97.2
+Q 290.3 97.2, 289.8 97.4
+Q 289.4 97.6, 289.1 97.9
+Q 289.2 99.0, 289.5 99.6
+Q 289.9 100.1, 290.7 100.1
+" fill="#000000"></path>
+<path class="note" d="M 336.6 53.0
+L 332.9 53.0
+L 332.9 52.2
+L 337.6 52.2
+L 337.6 52.9
+L 334.7 59.3
+L 333.8 59.3
+L 336.6 53.0
+" fill="#000000"></path>
+<path class="note" d="M 379.6 98.6
+Q 380.2 98.9, 380.6 99.3
+Q 381.0 99.7, 381.0 100.5
+Q 381.0 101.1, 380.7 101.5
+Q 380.3 102.0, 379.8 102.3
+Q 379.2 102.5, 378.5 102.5
+Q 377.3 102.5, 376.6 102.0
+Q 375.9 101.4, 375.9 100.5
+Q 375.9 99.9, 376.2 99.4
+Q 376.5 99.0, 377.1 98.6
+Q 376.7 98.4, 376.4 98.0
+Q 376.2 97.6, 376.2 97.0
+Q 376.2 96.2, 376.8 95.7
+Q 377.4 95.2, 378.4 95.2
+Q 379.5 95.2, 380.1 95.7
+Q 380.7 96.2, 380.7 97.0
+Q 380.7 97.5, 380.4 97.9
+Q 380.1 98.3, 379.6 98.6
+M 378.4 95.9
+Q 377.8 95.9, 377.5 96.2
+Q 377.2 96.5, 377.2 97.0
+Q 377.2 97.4, 377.4 97.6
+Q 377.6 97.9, 377.9 98.0
+Q 378.3 98.1, 378.9 98.4
+Q 379.3 98.1, 379.5 97.7
+Q 379.7 97.4, 379.7 97.0
+Q 379.7 96.5, 379.4 96.2
+Q 379.0 95.9, 378.4 95.9
+M 378.5 101.8
+Q 379.1 101.8, 379.6 101.4
+Q 380.0 101.0, 380.0 100.4
+Q 380.0 100.1, 379.7 99.8
+Q 379.5 99.6, 379.2 99.4
+Q 378.9 99.3, 378.3 99.1
+L 377.9 99.0
+Q 377.4 99.3, 377.1 99.6
+Q 376.9 100.0, 376.9 100.4
+Q 376.9 101.0, 377.3 101.4
+Q 377.8 101.8, 378.5 101.8
+" fill="#000000"></path>
+<path class="note" d="M 427.0 69.5
+Q 428.3 69.5, 428.9 70.4
+Q 429.5 71.2, 429.5 73.0
+Q 429.5 74.9, 428.7 75.9
+Q 428.0 76.9, 426.4 76.9
+Q 426.0 76.9, 425.6 76.8
+Q 425.2 76.7, 424.8 76.4
+L 425.2 75.8
+Q 425.8 76.0, 426.4 76.0
+Q 427.4 76.0, 427.9 75.4
+Q 428.5 74.7, 428.5 73.4
+Q 428.2 73.7, 427.7 73.9
+Q 427.2 74.1, 426.7 74.1
+Q 426.1 74.1, 425.6 73.8
+Q 425.1 73.5, 424.8 73.0
+Q 424.6 72.5, 424.6 71.9
+Q 424.6 71.2, 424.9 70.7
+Q 425.2 70.1, 425.7 69.8
+Q 426.3 69.5, 427.0 69.5
+M 425.6 71.9
+Q 425.6 72.5, 425.9 72.9
+Q 426.3 73.3, 426.9 73.3
+Q 427.4 73.3, 427.8 73.1
+Q 428.2 72.9, 428.5 72.6
+Q 428.5 71.4, 428.1 70.9
+Q 427.7 70.3, 427.0 70.3
+Q 426.6 70.3, 426.3 70.5
+Q 425.9 70.8, 425.8 71.1
+Q 425.6 71.5, 425.6 71.9
+" fill="#000000"></path>
+</svg>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mol.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> generate_smiles(<span class="st">'ring'</span>, <span class="dv">6</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> Huckel(mol)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>mol.molecule</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for C1=CC=CC=C1: [-2.000 (1)]  [-1.000 (2)]  [1.000 (2)]  [2.000 (1)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<!--?xml version='1.0' encoding='iso-8859-1'?-->
+<svg version="1.1" baseprofile="full" xmlns="http://www.w3.org/2000/svg" xmlns:rdkit="http://www.rdkit.org/xml" xlink="http://www.w3.org/1999/xlink" space="preserve" width="450px" height="150px" viewbox="0 0 450 150">
+<!-- END OF HEADER -->
+<rect style="opacity:1.0;fill:#FFFFFF;stroke:none" width="450.0" height="150.0" x="0.0" y="0.0"> </rect>
+<path class="bond-0 atom-0 atom-1" d="M 287.9,75.0 L 256.4,129.6" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-0 atom-0 atom-1" d="M 277.0,75.0 L 250.9,120.1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-1 atom-1 atom-2" d="M 256.4,129.6 L 193.3,129.6" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-2 atom-2 atom-3" d="M 193.3,129.6 L 161.8,75.0" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-2 atom-2 atom-3" d="M 198.8,120.1 L 172.7,75.0" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-3 atom-3 atom-4" d="M 161.8,75.0 L 193.3,20.4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-4 atom-4 atom-5" d="M 193.3,20.4 L 256.4,20.4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-4 atom-4 atom-5" d="M 198.8,29.8 L 250.9,29.8" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-5 atom-5 atom-0" d="M 256.4,20.4 L 287.9,75.0" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path d="M 286.3,77.7 L 287.9,75.0 L 286.3,72.2" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 258.0,126.8 L 256.4,129.6 L 253.2,129.6" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 196.5,129.6 L 193.3,129.6 L 191.8,126.8" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 163.4,77.7 L 161.8,75.0 L 163.4,72.2" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 191.8,23.1 L 193.3,20.4 L 196.5,20.4" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 253.2,20.4 L 256.4,20.4 L 258.0,23.1" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path class="note" d="M 298.4 79.6
+Q 296.8 79.6, 296.0 78.4
+Q 295.1 77.2, 295.1 75.0
+Q 295.1 72.9, 296.0 71.7
+Q 296.8 70.5, 298.4 70.5
+Q 300.1 70.5, 300.9 71.7
+Q 301.7 72.9, 301.7 75.0
+Q 301.7 77.2, 300.9 78.4
+Q 300.1 79.6, 298.4 79.6
+M 298.4 78.6
+Q 299.4 78.6, 299.9 77.7
+Q 300.4 76.8, 300.4 75.0
+Q 300.4 73.3, 299.9 72.4
+Q 299.4 71.5, 298.4 71.5
+Q 297.5 71.5, 296.9 72.4
+Q 296.4 73.3, 296.4 75.0
+Q 296.4 76.8, 296.9 77.7
+Q 297.5 78.6, 298.4 78.6
+" fill="#000000"></path>
+<path class="note" d="M 259.4 142.1
+L 261.4 142.1
+L 261.4 135.5
+L 259.2 136.1
+L 258.9 135.4
+L 261.7 134.2
+L 262.6 134.3
+L 262.6 142.1
+L 264.3 142.1
+L 264.3 143.2
+L 259.4 143.2
+L 259.4 142.1
+" fill="#000000"></path>
+<path class="note" d="M 185.1 135.9
+Q 185.4 135.1, 186.2 134.6
+Q 187.0 134.2, 188.1 134.2
+Q 189.4 134.2, 190.2 134.9
+Q 190.9 135.6, 190.9 136.9
+Q 190.9 138.2, 190.0 139.5
+Q 189.0 140.7, 187.0 142.2
+L 191.1 142.2
+L 191.1 143.2
+L 185.1 143.2
+L 185.1 142.3
+Q 186.8 141.2, 187.7 140.3
+Q 188.7 139.4, 189.2 138.6
+Q 189.7 137.8, 189.7 137.0
+Q 189.7 136.1, 189.3 135.6
+Q 188.8 135.2, 188.1 135.2
+Q 187.4 135.2, 186.9 135.5
+Q 186.4 135.7, 186.1 136.4
+L 185.1 135.9
+" fill="#000000"></path>
+<path class="note" d="M 152.6 74.8
+Q 153.5 75.0, 153.9 75.6
+Q 154.3 76.2, 154.3 77.0
+Q 154.3 77.8, 153.9 78.4
+Q 153.6 79.0, 152.9 79.3
+Q 152.2 79.6, 151.3 79.6
+Q 150.3 79.6, 149.6 79.3
+Q 148.9 78.9, 148.3 78.3
+L 149.0 77.5
+Q 149.6 78.1, 150.1 78.4
+Q 150.5 78.6, 151.3 78.6
+Q 152.1 78.6, 152.6 78.2
+Q 153.1 77.7, 153.1 77.0
+Q 153.1 76.1, 152.5 75.7
+Q 152.0 75.3, 150.9 75.3
+L 150.3 75.3
+L 150.3 74.4
+L 150.9 74.4
+Q 151.8 74.4, 152.4 74.0
+Q 152.9 73.5, 152.9 72.7
+Q 152.9 72.2, 152.4 71.8
+Q 152.0 71.5, 151.3 71.5
+Q 150.5 71.5, 150.1 71.7
+Q 149.6 72.0, 149.3 72.7
+L 148.4 72.2
+Q 148.7 71.5, 149.5 71.0
+Q 150.2 70.5, 151.3 70.5
+Q 152.6 70.5, 153.4 71.1
+Q 154.1 71.7, 154.1 72.7
+Q 154.1 73.5, 153.7 74.0
+Q 153.4 74.5, 152.6 74.8
+" fill="#000000"></path>
+<path class="note" d="M 190.5 12.7
+L 191.5 12.7
+L 191.5 13.7
+L 190.5 13.7
+L 190.5 15.7
+L 189.3 15.7
+L 189.3 13.7
+L 184.7 13.7
+L 184.7 12.9
+L 188.6 6.8
+L 190.5 6.8
+L 190.5 12.7
+M 186.1 12.7
+L 189.3 12.7
+L 189.3 7.6
+L 186.1 12.7
+" fill="#000000"></path>
+<path class="note" d="M 261.9 10.2
+Q 262.6 10.2, 263.3 10.5
+Q 263.9 10.8, 264.3 11.5
+Q 264.7 12.1, 264.7 12.9
+Q 264.7 13.8, 264.2 14.5
+Q 263.8 15.2, 263.0 15.5
+Q 262.3 15.8, 261.5 15.8
+Q 260.7 15.8, 259.9 15.5
+Q 259.1 15.2, 258.6 14.7
+L 259.4 13.9
+Q 259.8 14.3, 260.4 14.6
+Q 260.9 14.8, 261.5 14.8
+Q 262.3 14.8, 262.8 14.3
+Q 263.4 13.8, 263.4 12.9
+Q 263.4 12.0, 262.8 11.6
+Q 262.3 11.1, 261.4 11.1
+Q 260.7 11.1, 259.8 11.4
+L 259.1 11.1
+L 259.5 6.8
+L 264.1 6.8
+L 264.0 7.8
+L 260.6 7.8
+L 260.3 10.5
+Q 261.1 10.2, 261.9 10.2
+" fill="#000000"></path>
+</svg>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mol.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Similarly, it works for more complkex 3d structures (though rdkit struggles to show their structure in the output skeletal diagram)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tetrahedrane_smiles <span class="op">=</span> <span class="st">'C12C3C1C23'</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cubane_smiles <span class="op">=</span> <span class="st">'C12C3C4C1C5C2C3C45'</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>dodecahedrane_smiles <span class="op">=</span> <span class="st">'C12C3C4C5C1C6C7C2C8C3C9C4C1C5C6C2C7C8C9C12'</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>fullerene_smiles <span class="op">=</span> <span class="st">"c12c3c4c5c2c2c6c7c1c1c8c3c3c9c4c4c</span><span class="sc">%10c</span><span class="st">5c5c2c2c6c6c</span><span class="sc">%11c</span><span class="st">7c1c1c7c8c3c3c8c9c4c4c9c</span><span class="sc">%10c</span><span class="st">5c5c2c2c6c6c</span><span class="sc">%11c</span><span class="st">1c1c7c3c3c8c4c4c9c5c2c2c6c1c3c42"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rdkit does consider all bonds, even if all are not shown on the output skeletal diagram: this is mostly apparent for cubane</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>molecule <span class="op">=</span> Chem.MolFromSmiles(cubane_smiles)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> <span class="op">-</span>Chem.GetAdjacencyMatrix(molecule)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[ 0 -1  0 -1  0 -1  0  0]
+ [-1  0 -1  0  0  0 -1  0]
+ [ 0 -1  0 -1  0  0  0 -1]
+ [-1  0 -1  0 -1  0  0  0]
+ [ 0  0  0 -1  0 -1  0 -1]
+ [-1  0  0  0 -1  0 -1  0]
+ [ 0 -1  0  0  0 -1  0 -1]
+ [ 0  0 -1  0 -1  0 -1  0]]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tetrahedrane <span class="op">=</span> Huckel(tetrahedrane_smiles)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tetrahedrane)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>tetrahedrane.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for C12C3C1C23: [-3.000 (1)]  [1.000 (3)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cubane <span class="op">=</span> Huckel(cubane_smiles)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cubane)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>cubane.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for C12C3C4C1C5C2C3C45: [-3.000 (1)]  [-1.000 (3)]  [1.000 (3)]  [3.000 (1)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dodecahedrane <span class="op">=</span> Huckel(dodecahedrane_smiles)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dodecahedrane)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>dodecahedrane.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for C12C3C4C5C1C6C7C2C8C3C9C4C1C5C6C2C7C8C9C12: [-3.000 (1)]  [-2.236 (3)]  [-1.000 (5)]  [0.000 (4)]  [2.000 (4)]  [2.236 (3)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-13-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fullerene <span class="op">=</span> Huckel(fullerene_smiles)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fullerene)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>fullerene.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for c12c3c4c5c2c2c6c7c1c1c8c3c3c9c4c4c%10c5c5c2c2c6c6c%11c7c1c1c7c8c3c3c8c9c4c4c9c%10c5c5c2c2c6c6c%11c1c1c7c3c3c8c4c4c9c5c2c2c6c1c3c42: [-3.000 (1)]  [-2.757 (3)]  [-2.303 (5)]  [-1.820 (3)]  [-1.562 (4)]  [-1.000 (9)]  [-0.618 (5)]  [0.139 (3)]  [0.382 (3)]  [1.303 (5)]  [1.438 (3)]  [1.618 (5)]  [2.000 (4)]  [2.562 (4)]  [2.618 (3)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-14-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>It is also possible to manually overwrite the Huckel matrix in order to deal with species such as pyridine:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pyridine <span class="op">=</span> Huckel(<span class="st">'n1ccccc1'</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>pyridine.molecule</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<!--?xml version='1.0' encoding='iso-8859-1'?-->
+<svg version="1.1" baseprofile="full" xmlns="http://www.w3.org/2000/svg" xmlns:rdkit="http://www.rdkit.org/xml" xlink="http://www.w3.org/1999/xlink" space="preserve" width="450px" height="150px" viewbox="0 0 450 150">
+<!-- END OF HEADER -->
+<rect style="opacity:1.0;fill:#FFFFFF;stroke:none" width="450.0" height="150.0" x="0.0" y="0.0"> </rect>
+<path class="bond-0 atom-0 atom-1" d="M 276.3,86.0 L 263.7,107.8" style="fill:none;fill-rule:evenodd;stroke:#0000FF;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-0 atom-0 atom-1" d="M 263.7,107.8 L 251.1,129.6" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-0 atom-0 atom-1" d="M 268.1,81.3 L 256.9,100.7" style="fill:none;fill-rule:evenodd;stroke:#0000FF;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-0 atom-0 atom-1" d="M 256.9,100.7 L 245.7,120.1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-1 atom-1 atom-2" d="M 251.1,129.6 L 188.1,129.6" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-2 atom-2 atom-3" d="M 188.1,129.6 L 156.6,75.0" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-2 atom-2 atom-3" d="M 193.6,120.1 L 167.5,75.0" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-3 atom-3 atom-4" d="M 156.6,75.0 L 188.1,20.4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-4 atom-4 atom-5" d="M 188.1,20.4 L 251.1,20.4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-4 atom-4 atom-5" d="M 193.6,29.8 L 245.7,29.8" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-5 atom-5 atom-0" d="M 251.1,20.4 L 263.7,42.2" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path class="bond-5 atom-5 atom-0" d="M 263.7,42.2 L 276.3,64.0" style="fill:none;fill-rule:evenodd;stroke:#0000FF;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"></path>
+<path d="M 251.8,128.5 L 251.1,129.6 L 248.0,129.6" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 191.2,129.6 L 188.1,129.6 L 186.5,126.8" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 158.2,77.7 L 156.6,75.0 L 158.2,72.2" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 186.5,23.1 L 188.1,20.4 L 191.2,20.4" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path d="M 248.0,20.4 L 251.1,20.4 L 251.8,21.5" style="fill:none;stroke:#000000;stroke-width:2.0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"></path>
+<path class="atom-0" d="M 278.7 66.0
+L 284.6 75.5
+Q 285.1 76.4, 286.1 78.1
+Q 287.0 79.8, 287.1 79.9
+L 287.1 66.0
+L 289.4 66.0
+L 289.4 83.9
+L 287.0 83.9
+L 280.7 73.6
+Q 280.0 72.4, 279.2 71.0
+Q 278.4 69.6, 278.2 69.1
+L 278.2 83.9
+L 275.9 83.9
+L 275.9 66.0
+L 278.7 66.0
+" fill="#0000FF"></path>
+<path class="note" d="M 303.7 79.6
+Q 302.0 79.6, 301.2 78.4
+Q 300.4 77.2, 300.4 75.0
+Q 300.4 72.9, 301.2 71.7
+Q 302.0 70.5, 303.7 70.5
+Q 305.3 70.5, 306.1 71.7
+Q 306.9 72.9, 306.9 75.0
+Q 306.9 77.2, 306.1 78.4
+Q 305.3 79.6, 303.7 79.6
+M 303.7 78.6
+Q 304.6 78.6, 305.2 77.7
+Q 305.7 76.8, 305.7 75.0
+Q 305.7 73.3, 305.2 72.4
+Q 304.6 71.5, 303.7 71.5
+Q 302.7 71.5, 302.2 72.4
+Q 301.7 73.3, 301.7 75.0
+Q 301.7 76.8, 302.2 77.7
+Q 302.7 78.6, 303.7 78.6
+" fill="#000000"></path>
+<path class="note" d="M 254.2 142.1
+L 256.1 142.1
+L 256.1 135.5
+L 254.0 136.1
+L 253.7 135.4
+L 256.4 134.2
+L 257.3 134.3
+L 257.3 142.1
+L 259.1 142.1
+L 259.1 143.2
+L 254.2 143.2
+L 254.2 142.1
+" fill="#000000"></path>
+<path class="note" d="M 179.9 135.9
+Q 180.2 135.1, 181.0 134.6
+Q 181.8 134.2, 182.8 134.2
+Q 184.2 134.2, 184.9 134.9
+Q 185.7 135.6, 185.7 136.9
+Q 185.7 138.2, 184.7 139.5
+Q 183.7 140.7, 181.7 142.2
+L 185.8 142.2
+L 185.8 143.2
+L 179.8 143.2
+L 179.8 142.3
+Q 181.5 141.2, 182.5 140.3
+Q 183.5 139.4, 184.0 138.6
+Q 184.4 137.8, 184.4 137.0
+Q 184.4 136.1, 184.0 135.6
+Q 183.6 135.2, 182.8 135.2
+Q 182.1 135.2, 181.6 135.5
+Q 181.2 135.7, 180.8 136.4
+L 179.9 135.9
+" fill="#000000"></path>
+<path class="note" d="M 147.4 74.8
+Q 148.2 75.0, 148.6 75.6
+Q 149.1 76.2, 149.1 77.0
+Q 149.1 77.8, 148.7 78.4
+Q 148.3 79.0, 147.6 79.3
+Q 146.9 79.6, 146.0 79.6
+Q 145.1 79.6, 144.3 79.3
+Q 143.6 78.9, 143.1 78.3
+L 143.8 77.5
+Q 144.3 78.1, 144.8 78.4
+Q 145.3 78.6, 146.0 78.6
+Q 146.8 78.6, 147.3 78.2
+Q 147.8 77.7, 147.8 77.0
+Q 147.8 76.1, 147.3 75.7
+Q 146.8 75.3, 145.7 75.3
+L 145.0 75.3
+L 145.0 74.4
+L 145.6 74.4
+Q 146.6 74.4, 147.1 74.0
+Q 147.6 73.5, 147.6 72.7
+Q 147.6 72.2, 147.2 71.8
+Q 146.8 71.5, 146.0 71.5
+Q 145.3 71.5, 144.8 71.7
+Q 144.4 72.0, 144.0 72.7
+L 143.1 72.2
+Q 143.5 71.5, 144.2 71.0
+Q 145.0 70.5, 146.0 70.5
+Q 147.3 70.5, 148.1 71.1
+Q 148.9 71.7, 148.9 72.7
+Q 148.9 73.5, 148.5 74.0
+Q 148.1 74.5, 147.4 74.8
+" fill="#000000"></path>
+<path class="note" d="M 185.2 12.7
+L 186.3 12.7
+L 186.3 13.7
+L 185.2 13.7
+L 185.2 15.7
+L 184.0 15.7
+L 184.0 13.7
+L 179.4 13.7
+L 179.4 12.9
+L 183.3 6.8
+L 185.2 6.8
+L 185.2 12.7
+M 180.9 12.7
+L 184.0 12.7
+L 184.0 7.6
+L 180.9 12.7
+" fill="#000000"></path>
+<path class="note" d="M 256.6 10.2
+Q 257.4 10.2, 258.0 10.5
+Q 258.7 10.8, 259.0 11.5
+Q 259.4 12.1, 259.4 12.9
+Q 259.4 13.8, 259.0 14.5
+Q 258.5 15.2, 257.8 15.5
+Q 257.0 15.8, 256.2 15.8
+Q 255.4 15.8, 254.6 15.5
+Q 253.9 15.2, 253.4 14.7
+L 254.1 13.9
+Q 254.5 14.3, 255.1 14.6
+Q 255.7 14.8, 256.3 14.8
+Q 257.0 14.8, 257.6 14.3
+Q 258.1 13.8, 258.1 12.9
+Q 258.1 12.0, 257.6 11.6
+Q 257.0 11.1, 256.2 11.1
+Q 255.4 11.1, 254.5 11.4
+L 253.8 11.1
+L 254.3 6.8
+L 258.9 6.8
+L 258.7 7.8
+L 255.3 7.8
+L 255.0 10.5
+Q 255.8 10.2, 256.6 10.2
+" fill="#000000"></path>
+</svg>
+</div>
+</div>
+<p>The Huckel matrix at the moment is still only the negative of the adjacency matrix, and so is the same as that of benzene</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pyridine.matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([[ 0, -1,  0,  0,  0, -1],
+       [-1,  0, -1,  0,  0,  0],
+       [ 0, -1,  0, -1,  0,  0],
+       [ 0,  0, -1,  0, -1,  0],
+       [ 0,  0,  0, -1,  0, -1],
+       [-1,  0,  0,  0, -1,  0]], dtype=int32)</code></pre>
+</div>
+</div>
+<p>We can overwrite this matrix: taking the assumption in the A4 course, that <span class="math inline">\(\alpha_{N} = \alpha+\beta/2\)</span> and <span class="math inline">\(\beta_{NC}=0.8\beta\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>pyridine.matrix <span class="op">=</span> np.array([[ <span class="op">-</span><span class="dv">1</span><span class="op">/</span><span class="dv">2</span>, <span class="op">-</span><span class="fl">0.8</span>,  <span class="dv">0</span>,  <span class="dv">0</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="fl">0.8</span>],</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>       [<span class="op">-</span><span class="fl">0.8</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>,  <span class="dv">0</span>,  <span class="dv">0</span>],</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>       [ <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>,  <span class="dv">0</span>],</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>       [ <span class="dv">0</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>],</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>       [ <span class="dv">0</span>,  <span class="dv">0</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>],</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>       [<span class="op">-</span><span class="fl">0.8</span>,  <span class="dv">0</span>,  <span class="dv">0</span>,  <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>,  <span class="dv">0</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pyridine)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pyridine.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Huckel Energies (degeneracy) for n1ccccc1: [-1.954 (1)]  [-1.062 (1)]  [-1.000 (1)]  [0.667 (1)]  [1.000 (1)]  [1.849 (1)] </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_HuckelSolver_files/figure-html/cell-18-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
