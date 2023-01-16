@@ -70,7 +70,6 @@ class Huckel:
         self.smiles = SMILES
         self.molecule = Chem.MolFromSmiles(SMILES)
         self.matrix = -Chem.GetAdjacencyMatrix(self.molecule)
-        self.matrix = -Chem.GetAdjacencyMatrix(self.molecule)
 
     @property
     def energy_dict(self):
